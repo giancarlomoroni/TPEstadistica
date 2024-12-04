@@ -236,9 +236,200 @@ R_wilcox <- wilcox.test(X, alternative="two.sided", mu = theta0)
 mi_wilcox <- mi_wilcox_test(X, alternative="two.sided", mu = theta0)
 stopifnot(
  mi_wilcox$statistic == R_wilcox$statistic,
- mi_wilcox$p.value == R_wilcox$p.value,
+ abs(mi_wilcox$p.value - R_wilcox$p.value) < 1E-10,
  mi_wilcox$alternative == R_wilcox$alternative,
  class(mi_wilcox) == "htest"
 )
 ```
 
+#Ejercicio 17
+
+```{r}
+library(ggplot2)
+
+grafico_de_distribuciones <- function(n){
+  valores_Tmas <- 0:(n * (n + 1) / 2)
+  probabilidades <- dTmas(valores_Tmas, n)
+  
+  media_asintotica <- n * (n + 1) / 4
+  desv_asintotica <- sqrt(n * (n + 1) * (2 * n + 1) / 24)
+  x_asintotico <- seq(min(valores_Tmas), max(valores_Tmas), length.out = 100)
+  y_asintotico <- dnorm(x_asintotico, mean = media_asintotica, sd = desv_asintotica)
+  
+  data <- data.frame(
+    valores_Tmas = valores_Tmas,
+    probabilidades = probabilidades
+  )
+  
+  data_asintotico <- data.frame(
+    x_asintotico = x_asintotico,
+    y_asintotico = y_asintotico
+  )
+  separacion <- 2
+  if (n == 20){
+    separacion <- 8
+  }
+  ggplot() +
+    geom_bar(
+      data = data,
+      aes(x = valores_Tmas, y = probabilidades),
+      stat = "identity",
+      fill = "skyblue", 
+      alpha = 0.8
+    ) +
+    geom_line(
+      data = data_asintotico,
+      aes(x = x_asintotico, y = y_asintotico),
+      color = "red", 
+      size = 1
+    ) +
+    labs(
+      title = sprintf("Grafico de distribuciones para n = %d", n),
+      x = "Valores de T+",
+      y = "Probabilidades",
+      fill = "Legend",
+      color = "Legend"
+    ) +
+    scale_x_continuous(
+      breaks = seq(min(valores_Tmas), max(valores_Tmas), by = separacion),
+      labels = as.character(seq(min(valores_Tmas), max(valores_Tmas), by = separacion)),
+      expand = expansion(mult = c(0.1, 0.1))
+    ) +
+    theme_minimal() +
+    theme(
+      legend.position = "right",
+      legend.box.spacing = unit(1, "cm"),
+      legend.title = element_blank(),
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    )
+}
+grafico_de_distribuciones(4)
+grafico_de_distribuciones(10)
+grafico_de_distribuciones(20)
+
+```
+Podemos ver que coinciden bien hasta para valores chicos de n, lo que nos hace dudar la pregunta de que si existe una correccion sencilla, digamos sigue la misma forma, aunque la continuidad de los barplots, los vamos obteniendo en funcion de que n es grande. Cuando n es 10, podemos ver que vale bien las colsa y en el centro parece que faltaria rellenar un poco todavia.
+
+#Ejercicio 18
+Primero vamos a calcular el valor de k* para maximizar la potencia del test. Por lo tanto vamos calcular cual es el cauntil 0.05 de la distribucion de T+. Aprovechandonos que la distribucion es discreta, vamos a ir calculando la P(T+ = t) del final al principio y sumando cada valor de probabilidad.Para  el t que la suma de las probas supere 0,05(t´), NO lo vamos a considerar y nos vamos a quedar con el t anterior  a él osea t´+1. Ese sera el cuantil 0,05 de la distribución. Luego este será el valor de k* que maximice la potencia por el "trade off"  entre el Error de tipo 1 y el error de tipo 2. Es decir mientras mas grande sea el valor del Error I, más chico será el Error II. Como la potencia del test bajo H1 es 1 - P(Error II), mientras mas grande es la P(Error I), mayor será a pontencia del Test bajo H1. 
+```{r}
+#Calculemos entonces el k*
+# Buscar k* desde el valor máximo posible hasta 1
+
+calculo_cuantil  <- function(n, alfa){
+  T_max <- n * (n + 1) / 2
+  suma_prob <- 0
+  k <- 1
+  iteraciones <- 0 
+  for (t in T_max:0) {
+    prob_t <- probabilidad(t, n)
+    suma_prob <- suma_prob + prob_t
+    if (suma_prob > alfa) {
+      k <- t + 1
+      break
+    }
+    
+  }
+  return(k)
+}
+
+print(calculo_cuantil(12, 0.05))
+print(1 - pTmas(60,12)) #Esto es P(T+ >= 61), asi que esta bien el k
+print(1 - pTmas(59,12)) #Esto es P(T+ >= 60), Vemos que nos pasamos del valor alpha = 0.05
+```
+
+Una vez calculado el k para n = 12 , ahora vamos a realizar los pasos que aparecen en el TP. Comenzamos generando las m muestra de Yi calcualmos el valor de T+(Yi). 
+
+```{r}
+calculo_estadisticoT_mas <- function(x){
+  solo_positivos_filter <- ifelse(x >= 0, 1, 0)
+  modx <- abs(x) #No es necesario pq a las negativas no las vamos a considerar
+  rango <- rank(modx)
+  producto <- solo_positivos_filter*rango
+  return(sum(producto))
+}
+m = 10000
+set.seed(1984)
+n <- 12
+theta1 <- 1
+sigma_sq <- 1
+vector_Ys = c()
+vector_Ys <- replicate(m, {
+  X <- rnorm(n, mean = theta1, sd = sqrt(sigma_sq))
+  calculo_estadisticoT_mas(X)
+}) #Esta forma es como un "for", pero en cada indice se guarda un valor del estadistico 
+k <- calculo_cuantil(12,0.05)
+vector_resultado <- ifelse(vector_Ys >= k, 1, 0) #IMPORTANTE el igual ya que es discreta
+potencia_estimada = (1/m) * sum(vector_resultado)
+potencia_estimada
+```
+La estimación de la potencia del test es de 0.9271. Con lo cual la  
+P(Error II) es 1-0.9144 = 0.0866 que es muy baja para este valor de tita fijo. Por lo tanto a partir de bootsrapt podemos decir que el test es bastante bueno.
+
+#Ejercicio 19
+Primero debemos computar el test t de Student para esta muestra. Bajo H0, nos queda ....(lo hago en el PDF??). Lo primero que hacemos es calcular el valor de k, donde el test debe ser de nivel 0.05
+```{r}
+theta <- 1
+sigma <- 1
+n <- 12
+alfa <- 0.05
+nu <- n - 1
+
+centralidad <- theta / (sigma / sqrt(n))
+k <- qt(1 - alfa / 2, df = nu)
+
+potencia <- 1 - (pt(k, df = nu, ncp = centralidad) - pt(-k, df = nu, ncp = centralidad))
+cat("Potencia para el test t bilateral para theta = 1: ", potencia)
+```
+
+Luego pasamos a computar el test de signos
+El test de signos va a tener una distribucion Bi(n,1/2) bajo H0, ya que si tita = 0, la distribucuion va a ser simetrica y centrada en 0, por lo que la probabilidad de ser mayor o menor que cero es la misma.
+Por lo tanto solo nos falta encontrar el k, tal que la potencia del test bajo H0 es menor a 0.05
+```{r}
+
+calculo_cuantil_binomial  <- function(n,alfa){
+  T_max <- n   # Valor máximo posible de T^+
+  suma_prob <- 0  # Suma acumulada de probabilidades
+  k <- 1
+  iteraciones <- 0 
+  for (t in T_max:0) {
+    prob_t <- dbinom(t, n, 0.5)  # Probabilidad puntual para T^+ = t
+    suma_prob <- suma_prob + prob_t  # Acumular la probabilidad
+    if (suma_prob > alfa) {
+      k <- t + 1  # Guardar el valor k+1
+      break
+    }
+    
+  }
+  return(k)
+}
+
+k = calculo_cuantil_binomial(12,0.05)
+k
+```
+
+Ahora queda calcular la potencia del test via Bootstrap. 
+
+```{r}
+
+calculo_estadistico_signo <- function(x){
+  signos <- ifelse(x >= 0, 1, 0)
+  return(sum(signos))
+}
+m = 10000
+set.seed(1984)
+n <- 12
+theta1 <- 1
+sigma_sq <- 1
+vector_Ys = c()
+vector_Ys <- replicate(m, {
+  X <- rnorm(n, mean = theta1, sd = sqrt(sigma_sq))
+  calculo_estadistico_signo(X)
+}) #Esta forma es como un "for", pero en cada indice se guarda un valor del estadistico 
+k <- calculo_cuantil_binomial(12,0.05)
+vector_resultado_bin <- ifelse(vector_Ys >= k, 1, 0) #IMPORTANTE EL IGUAL
+potencia_estimada_bin = (1/m) * sum(vector_resultado_bin)
+potencia_estimada_bin
+```
+AGREGAR ESTO EN EL LATEX:
+El t test es mas potente que el test de signos, pero no llega a ser mejor que el test de wilcoxon. 

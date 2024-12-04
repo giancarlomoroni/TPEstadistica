@@ -333,6 +333,7 @@ Podemos ver que hasta para valores chicos de n da una buena intuición de cómo 
 
 #Ejercicio 18
 Primero vamos a calcular el valor de k* para maximizar la potencia del test. Por lo tanto vamos calcular cual es el cauntil 0.05 de la distribucion de T+. Aprovechandonos que la distribucion es discreta, vamos a ir calculando la P(T+ = t) del final al principio y sumando cada valor de probabilidad.Para  el t que la suma de las probas supere 0,05(t´), NO lo vamos a considerar y nos vamos a quedar con el t anterior  a él osea t´+1. Ese sera el cuantil 0,05 de la distribución. Luego este será el valor de k* que maximice la potencia por el "trade off"  entre el Error de tipo 1 y el error de tipo 2. Es decir mientras mas grande sea el valor del Error I, más chico será el Error II. Como la potencia del test bajo H1 es 1 - P(Error II), mientras mas grande es la P(Error I), mayor será a pontencia del Test bajo H1. 
+
 ```{r}
 #Calculemos entonces el k*
 # Buscar k* desde el valor máximo posible hasta 1
@@ -389,18 +390,18 @@ P(Error II) es 1-0.9144 = 0.0866 que es muy baja para este valor de tita fijo. P
 
 #Ejercicio 19
 Primero debemos computar el test t de Student para esta muestra. Bajo H0, nos queda ....(lo hago en el PDF??). Lo primero que hacemos es calcular el valor de k, donde el test debe ser de nivel 0.05
+
 ```{r}
 theta <- 1
 sigma <- 1
 n <- 12
 alfa <- 0.05
 nu <- n - 1
-
 centralidad <- theta / (sigma / sqrt(n))
-k <- qt(1 - alfa / 2, df = nu)
+k <- qt(1 - alfa, df = nu)
 
-potencia <- 1 - (pt(k, df = nu, ncp = centralidad) - pt(-k, df = nu, ncp = centralidad))
-cat("Potencia para el test t bilateral para theta = 1: ", potencia)
+potencia <- 1 - (pt(k, df = nu, ncp = centralidad))
+cat("Potencia para el t-test unilateral para theta = 1: ", potencia)
 ```
 
 Luego pasamos a computar el test de signos
@@ -452,5 +453,3 @@ vector_resultado_bin <- ifelse(vector_Ys >= k, 1, 0) #IMPORTANTE EL IGUAL
 potencia_estimada_bin = (1/m) * sum(vector_resultado_bin)
 potencia_estimada_bin
 ```
-AGREGAR ESTO EN EL LATEX:
-El t test es mas potente que el test de signos, pero no llega a ser mejor que el test de wilcoxon. 

@@ -1,17 +1,8 @@
----
-title: "TP final estadistica"
-author: "Giancarlo Moroni"
-date: "2024-11-30"
-output: html_document
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE------------------------------------------------------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
-```
 
-#Ejercicio 1
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 a = c(T, F)
 b = c(T, F, 1)
 c = c(T, F, 1, '1')
@@ -20,45 +11,33 @@ vec <- list(a, b, c)
 for (v in vec) {
   cat("El vector: ", v, " pertenece a la clase: ", class(v), "\n")
 }
-```
-Lo que sucede es para guardar en una estructura que tiene que tener mismo valor, intenta castear los elementos del menos generico, en este caso los booleanos, al mas generico que es el character. Entonces en estos casos:
-1. c(T,F) como son del mismo tipo, guarda a los valores en una lista del tipo logical.
-2. c(T,F,1) en este caso, hay dos clases distintas, numeric y logical, y como logical puede ser casteada a numeric, entonces T es 1 y F es 0 es terminos de numeric.
-3. c(T,F, 1, "1")  en este caso character es la clase mas generica para poder castear, entonces T -> 'True', F -> 'False' y el 1 es "1".
 
-#Ejercicio 2
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 cat('Density tiene clase: ', class(density), "\n")
 
 cat('Density(1:500) tiene clase: ', class(density(1:500)))
 
-```
-Vemos que las clases son distintas, la diferencia radica en que density es una funcion, pero si nosotros llamamos a la funcion con el vector 1:500, lo que estamos haciendo es viendo que clase tiene el resultado de llamar a la funcion density. En este caso el resultado son varios conjuntos de estructuras:
 
-```{r}
+
+## ------------------------------------------------------------------------------------------------------------------------------
 str(density(1:500))
-```
-#Ejericio 3
 
-```{r}
+
+## ------------------------------------------------------------------------------------------------------------------------------
 library(sloop)
 print(summary(s3_methods_generic("print")))
-```
-Vemos que el metodo print tiene para despachar 266 clases distintas, pero esto tambien depende realmente de cuantos paquetes tenga instalados en mi version de R, podria suceder que algun compañero de TP corra esta misma celda y le de un valor distinto.
 
-```{r}
+
+## ------------------------------------------------------------------------------------------------------------------------------
 #metodos_de_density <- methods(class="density")
 cat('los métodos de density son: \n')
 methods(class = "density")
 cat('la cantidad de métodos sin contar print son: ', length(metodos_de_density)-1)
 
-```
-Vemos que en este caso tenemos 6 metodos que tiene la clase density.
 
-#Pregunta 4
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 mu <- 1
 sigma_sq <- 1
 n <- 30
@@ -73,22 +52,17 @@ test_t <- t.test(
   conf.level = 1 - alfa
 )
 print(unclass(test_t))
-```
 
-Al correr la funcion unclass sobre test_t lo que estamos haciendo es justamente remover la clase de esta estructura, por lo cual veremos reflajada la estructura de datos limpia, que vemos que es una lista:
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 print(class(unclass(test_t)))
-```
 
-```{r}
+
+## ------------------------------------------------------------------------------------------------------------------------------
 class(test_t)
-```
-Esto sucede ya que cuando t.test, calcula los estadisticos, los guarda en una lista y luego le asigna la clase h.test, para que tenga un printeo mas declarativo que el que tiene normalmente una lista.
 
-#Ejercicio 10
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 todos_los_subconjuntos_de_5_elementos <- function() {
   elements <- 1:5
   subcojuntos <- list()
@@ -122,11 +96,9 @@ crear_tabla_observacion_6 <- function(){
   return(df)
 }
 print(crear_tabla_observacion_6())
-```
 
-#Pregunta 12
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 particiones <- function(t, n){
   if (n==0) {
     if (t == 0) return(1)
@@ -147,11 +119,9 @@ stopifnot(
   particiones(t=55, n=10) == 1,
   particiones(t=45, n=30) == 1938
 )
-```
 
-#Pregunta 13
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 
 # proba puntual 
 
@@ -183,11 +153,9 @@ stopifnot(
   dTmas(t, n) == dTmas(n * (n + 1) / 2 - t, n),
   pTmas(t, n) == 1 - pTmas(n * (n + 1) / 2 - (t + 1), n)
 )
-```
 
-#Ejercicio 14
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 library(stats)
 set.seed(125)
 n <- 15
@@ -238,9 +206,9 @@ stopifnot(
   abs (mi_wilcox$p.value - R_wilcox$p.value) < 1E-6
 )
 
-```
 
-```{r}
+
+## ------------------------------------------------------------------------------------------------------------------------------
 set.seed(1234)
 n <- 15
 X <- rnorm(n)
@@ -253,11 +221,9 @@ stopifnot(
  mi_wilcox$alternative == R_wilcox$alternative,
  class(mi_wilcox) == "htest"
 )
-```
 
-#Ejercicio 17
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 library(ggplot2)
 
 grafico_de_distribuciones <- function(n){
@@ -320,13 +286,9 @@ grafico_de_distribuciones(4)
 grafico_de_distribuciones(10)
 grafico_de_distribuciones(20)
 
-```
-Podemos ver que hasta para valores chicos de n da una buena intuición de cómo debería ser la distribución de T+. Es decir, sigue la misma forma, aunque la continuidad la vamos obteniendo a medida que n crece. Cuando n es 10, podemos ver que vale bien las colsa y en el centro parece que faltaria rellenar un poco todavia.
 
-#Ejercicio 18
-Primero vamos a calcular el valor de k* para maximizar la potencia del test. Por lo tanto vamos calcular cual es el cauntil 0.05 de la distribucion de T+. Aprovechandonos que la distribucion es discreta, vamos a ir calculando la P(T+ = t) del final al principio y sumando cada valor de probabilidad.Para  el t que la suma de las probas supere 0,05(t´), NO lo vamos a considerar y nos vamos a quedar con el t anterior  a él osea t´+1. Ese sera el cuantil 0,05 de la distribución. Luego este será el valor de k* que maximice la potencia por el "trade off"  entre el Error de tipo 1 y el error de tipo 2. Es decir mientras mas grande sea el valor del Error I, más chico será el Error II. Como la potencia del test bajo H1 es 1 - P(Error II), mientras mas grande es la P(Error I), mayor será a pontencia del Test bajo H1. 
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 #Calculemos entonces el k*
 # Buscar k* desde el valor máximo posible hasta 1
 
@@ -350,11 +312,9 @@ calculo_cuantil  <- function(n, alfa){
 print(calculo_cuantil(12, 0.05))
 print(1 - pTmas(60,12)) #Esto es P(T+ >= 61), asi que esta bien el k
 print(1 - pTmas(59,12)) #Esto es P(T+ >= 60), Vemos que nos pasamos del valor alpha = 0.05
-```
 
-Una vez calculado el k para n = 12 , ahora vamos a realizar los pasos que aparecen en el TP. Comenzamos generando las m muestra de Yi calcualmos el valor de T+(Yi). 
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 calculo_estadisticoT_mas <- function(x){
   solo_positivos_filter <- ifelse(x >= 0, 1, 0)
   modx <- abs(x) #No es necesario pq a las negativas no las vamos a considerar
@@ -376,14 +336,9 @@ k <- calculo_cuantil(12,0.05)
 vector_resultado <- ifelse(vector_Ys >= k, 1, 0) #IMPORTANTE el igual ya que es discreta
 potencia_estimada = (1/m) * sum(vector_resultado)
 potencia_estimada
-```
-La estimación de la potencia del test es de 0.9271. Con lo cual la  
-P(Error II) es 1-0.9144 = 0.0866 que es muy baja para este valor de tita fijo. Por lo tanto a partir de bootsrapt podemos decir que el test es bastante bueno.
 
-#Ejercicio 19
-Primero debemos computar el test t de Student para esta muestra. Bajo H0, nos queda ....(lo hago en el PDF??). Lo primero que hacemos es calcular el valor de k, donde el test debe ser de nivel 0.05
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 theta <- 1
 sigma <- 1
 n <- 12
@@ -394,12 +349,9 @@ k <- qt(1 - alfa, df = nu)
 
 potencia <- 1 - (pt(k, df = nu, ncp = centralidad))
 cat("Potencia para el t-test unilateral para theta = 1: ", potencia)
-```
 
-Luego pasamos a computar el test de signos
-El test de signos va a tener una distribucion Bi(n,1/2) bajo H0, ya que si tita = 0, la distribucuion va a ser simetrica y centrada en 0, por lo que la probabilidad de ser mayor o menor que cero es la misma.
-Por lo tanto solo nos falta encontrar el k, tal que la potencia del test bajo H0 es menor a 0.05
-```{r}
+
+## ------------------------------------------------------------------------------------------------------------------------------
 
 calculo_cuantil_binomial  <- function(n,alfa){
   T_max <- n   # Valor máximo posible de T^+
@@ -420,11 +372,9 @@ calculo_cuantil_binomial  <- function(n,alfa){
 
 k = calculo_cuantil_binomial(12,0.05)
 k
-```
 
-Ahora queda calcular la potencia del test via Bootstrap. 
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------
 
 calculo_estadistico_signo <- function(x){
   signos <- ifelse(x >= 0, 1, 0)
@@ -444,4 +394,4 @@ k <- calculo_cuantil_binomial(12,0.05)
 vector_resultado_bin <- ifelse(vector_Ys >= k, 1, 0) #IMPORTANTE EL IGUAL
 potencia_estimada_bin = (1/m) * sum(vector_resultado_bin)
 potencia_estimada_bin
-```
+

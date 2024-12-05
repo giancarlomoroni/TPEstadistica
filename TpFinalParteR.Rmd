@@ -1,6 +1,6 @@
 ---
 title: "TP final estadistica"
-author: "Giancarlo Moroni"
+author: "Grupo Estadistica"
 date: "2024-11-30"
 output: html_document
 ---

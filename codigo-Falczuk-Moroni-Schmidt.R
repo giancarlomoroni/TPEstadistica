@@ -30,8 +30,7 @@ print(str(density(1:500)))
 library(sloop)
 print(summary(s3_methods_generic("print")))
 cat('los métodos de density son: \n')
-methods(class = "density")
-cat('la cantidad de métodos sin contar print son: ', length(metodos_de_density)-1)
+cat('la cantidad de métodos sin contar print son: ', length(methods(class = "density"))-1)
 
 # Vemos que el metodo print tiene para despachar 266 clases distintas, pero esto tambien depende realmente de cuantos 
 # paquetes tenga instalados en mi version de R, podria suceder que algun compañero de TP corra esta misma celda y 
@@ -170,6 +169,7 @@ estadistico <- function(x){
 }
 
 mi.wilcox.test <- function(x, alternative, mu) {
+  n <- length(x)
   alternative <- match.arg(alternative, c("two.sided", "less", "greater"))
   x <- x - mu
   tobs <- estadistico(x)
@@ -341,7 +341,7 @@ vector_Ys <- replicate(m, {
 k <- calculo_cuantil(12,0.05)
 vector_resultado <- ifelse(vector_Ys >= k, 1, 0) #IMPORTANTE el igual ya que es discreta
 potencia_estimada = (1/m) * sum(vector_resultado)
-potencia_estimada
+cat("La potencia estimada para el test de wilcoxon es", potencia_estimada)
 
 #La estimación de la potencia del test es de 0.9271. Con lo cual la  
 # P(Error II) es 1-0.9144 = 0.0866 que es muy baja para este valor de tita fijo. Por lo tanto a 
@@ -405,5 +405,5 @@ vector_Ys <- replicate(m, {
 k <- calculo_cuantil_binomial(12,0.05)
 vector_resultado_bin <- ifelse(vector_Ys >= k, 1, 0) #IMPORTANTE EL IGUAL
 potencia_estimada_bin = (1/m) * sum(vector_resultado_bin)
-print(potencia_estimada_bin)
+cat("La potencia estimada para el test de signo es:", potencia_estimada_bin)
 

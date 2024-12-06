@@ -321,8 +321,6 @@ grafico_de_distribuciones(10)
 grafico_de_distribuciones(20)
 
 ```
-Podemos ver que hasta para valores chicos de n da una buena intuición de cómo debería ser la distribución de T+. Es decir, sigue la misma forma, aunque la continuidad la vamos obteniendo a medida que n crece. Cuando n es 10, podemos ver que vale bien las colsa y en el centro parece que faltaria rellenar un poco todavia.
-
 #Ejercicio 18
 Primero vamos a calcular el valor de k* para maximizar la potencia del test. Por lo tanto vamos calcular cual es el cauntil 0.05 de la distribucion de T+. Aprovechandonos que la distribucion es discreta, vamos a ir calculando la P(T+ = t) del final al principio y sumando cada valor de probabilidad.Para  el t que la suma de las probas supere 0,05(t´), NO lo vamos a considerar y nos vamos a quedar con el t anterior  a él osea t´+1. Ese sera el cuantil 0,05 de la distribución. Luego este será el valor de k* que maximice la potencia por el "trade off"  entre el Error de tipo 1 y el error de tipo 2. Es decir mientras mas grande sea el valor del Error I, más chico será el Error II. Como la potencia del test bajo H1 es 1 - P(Error II), mientras mas grande es la P(Error I), mayor será a pontencia del Test bajo H1. 
 

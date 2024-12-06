@@ -9,19 +9,19 @@ for (v in vec) {
   cat("El vector: ", v, " pertenece a la clase: ", class(v), "\n")
 }
 
-#Lo que sucede es para guardar en una estructura que tiene que tener mismo valor, intenta castear los elementos del menos generico, en este caso los booleanos, al mas generico que es el character. Entonces en estos casos:
+#Lo que sucede es para guardar en una estructura que tiene que tener mismo valor, intenta castear los elementos del menos generico, en este caso los booleanos, al más generico que es el character. Entonces en estos casos:
 # 1. c(T,F) como son del mismo tipo, guarda a los valores en una lista del tipo logical.
-# 2. c(T,F,1) en este caso, hay dos clases distintas, numeric y logical, y como logical puede ser casteada a numeric, entonces T es 1 y F es 0 es terminos de numeric.
-# 3. c(T,F, 1, "1")  en este caso character es la clase mas generica para poder castear, entonces T -> 'True', F -> 'False' y el 1 es "1".
+# 2. c(T,F,1) en este caso, hay dos clases distintas, numeric y logical, y como logical puede ser casteada a numeric, entonces T es 1 y F es 0 es términos de numeric.
+# 3. c(T,F, 1, "1")  en este caso character es la clase mas genérica para poder castear, entonces T -> 'True', F -> 'False' y el 1 es "1".
 
 #Ejercicio 2
 ## ------------------------------------------------------------------------------------------------------------------------------
 cat('Density tiene clase: ', class(density), "\n")
 cat('Density(1:500) tiene clase: ', class(density(1:500)))
 
-# Vemos que las clases son distintas, la diferencia radica en que density es una funcion, 
-# pero si nosotros llamamos a la funcion con el vector 1:500, lo que estamos haciendo es viendo 
-# que clase tiene el resultado de llamar a la funcion density. En este caso el resultado son varios conjuntos de estructuras:
+# Vemos que las clases son distintas, la diferencia radica en que density es una función, 
+# pero si nosotros llamamos a la función con el vector 1:500, lo que estamos haciendo es viendo 
+# que clase tiene el resultado de llamar a la función density. En este caso el resultado son varios conjuntos de estructuras:
 
 print(str(density(1:500)))
 
@@ -32,10 +32,10 @@ print(summary(s3_methods_generic("print")))
 cat('los métodos de density son: \n')
 cat('la cantidad de métodos sin contar print son: ', length(methods(class = "density"))-1)
 
-# Vemos que el metodo print tiene para despachar 266 clases distintas, pero esto tambien depende realmente de cuantos 
+# Vemos que el método print tiene para despachar 266 clases distintas, pero esto también depende realmente de cuantos 
 # paquetes tenga instalados en mi version de R, podria suceder que algun compañero de TP corra esta misma celda y 
 # le de un valor distinto.
-# Vemos que en este caso tenemos 6 metodos que tiene la clase density.
+# Vemos que en este caso tenemos 6 métodos que tiene la clase density.
 
 #Ejercicio 4
 ## ------------------------------------------------------------------------------------------------------------------------------
@@ -286,14 +286,7 @@ grafico_de_distribuciones(20)
 
 
 # Ejercicio 18
-# Primero vamos a calcular el valor de k* para maximizar la potencia del test. Por lo tanto vamos 
-# calcular cual es el cauntil 0.05 de la distribucion de T+. Aprovechandonos que la distribucion es 
-# discreta, vamos a ir calculando la P(T+ = t) del final al principio y sumando cada valor de probabilidad. 
-# Para  el t que la suma de las probas supere 0,05(t´), NO lo vamos a considerar y nos vamos a quedar con el 
-# t anterior  a él osea t´+1. Ese sera el cuantil 0,05 de la distribución. Luego este será el valor de k* que 
-# maximice la potencia por el "trade off"  entre el Error de tipo 1 y el error de tipo 2. Es decir 
-# mientras mas grande sea el valor del Error I, más chico será el Error II. Como la potencia del test bajo 
-# H1 es 1 - P(Error II), mientras mas grande es la P(Error I), mayor será a pontencia del Test bajo H1. 
+# Primero vamos a calcular el valor de k* para maximizar la potencia del test. 
 ## ------------------------------------------------------------------------------------------------------------------------------
 # Buscar k* desde el valor máximo posible hasta 1
 
@@ -344,8 +337,8 @@ potencia_estimada = (1/m) * sum(vector_resultado)
 cat("La potencia estimada para el test de wilcoxon es", potencia_estimada)
 
 #La estimación de la potencia del test es de 0.9271. Con lo cual la  
-# P(Error II) es 1-0.9144 = 0.0866 que es muy baja para este valor de tita fijo. Por lo tanto a 
-# partir de bootsrapt podemos decir que el test es bastante bueno.
+# P(Error II) es 1-0.9271 = 0.0729 que es muy baja para este valor de tita fijo. Por lo tanto a 
+# partir de bootstrap podemos decir que el test es bastante bueno.
 
 # Ejercicio 19
 # Primero debemos computar el test t de Student para esta muestra. 
@@ -370,9 +363,9 @@ cat("El valor de la potencia para el test normal es:", potencia_del_test_normal,
 
 
 # Luego pasamos a computar el test de signos
-# El test de signos va a tener una distribucion Bi(n,1/2) bajo H0, ya que si tita = 0, 
-# la distribucuion va a ser simetrica y centrada en 0, por lo que la probabilidad de ser mayor o menor que cero es la misma.
-# Por lo tanto solo nos falta encontrar el k, tal que la potencia del test bajo H0 es menor a 0.05
+# El test de signos va a tener una distribución Bi(n,1/2) bajo H0, ya que si tita = 0, 
+# la distribucuión va a ser simétrica y centrada en 0, por lo que la probabilidad de ser mayor o menor que cero es la misma.
+# Por lo tanto solo nos falta encontrar el k, tal que la potencia del test bajo H0 es menor a 0.05.
 
 calculo_cuantil_binomial  <- function(n,alfa){
   T_max <- n   # Valor máximo posible de T^+
@@ -394,7 +387,7 @@ calculo_cuantil_binomial  <- function(n,alfa){
 k = calculo_cuantil_binomial(12,0.05)
 print(k)
 
-#Calculo potencia via bootstrap.
+#Cálculo potencia via bootstrap.
 calculo_estadistico_signo <- function(x){
   signos <- ifelse(x >= 0, 1, 0)
   return(sum(signos))
@@ -408,8 +401,8 @@ vector_Ys = c()
 vector_Ys <- replicate(m, {
   X <- rnorm(n, mean = theta1, sd = sqrt(sigma_sq))
   calculo_estadistico_signo(X)
-}) #Esta forma es como un "for", pero en cada indice se guarda un valor del estadistico 
+}) #Esta forma es como un "for", pero en cada índice se guarda un valor del estadistico 
 k <- calculo_cuantil_binomial(12,0.05)
-vector_resultado_bin <- ifelse(vector_Ys >= k, 1, 0) #IMPORTANTE EL IGUAL
+vector_resultado_bin <- ifelse(vector_Ys >= k, 1, 0) # Importante el "="
 potencia_estimada_bin = (1/m) * sum(vector_resultado_bin)
 cat("La potencia estimada para el test de signo es:", potencia_estimada_bin)

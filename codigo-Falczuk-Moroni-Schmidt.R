@@ -362,6 +362,13 @@ k <- qt(1 - alfa, df = nu)
 potencia <- 1 - (pt(k, df = nu, ncp = centralidad))
 cat("Potencia para el t-test unilateral para theta = 1: ", potencia)
 
+#Calculamos la potencia para el test de la normal para mu con sigma conocido.
+k_alpha <- qnorm(0.95,0, 1)
+n <- 12
+potencia_del_test_normal <- 1 - pnorm(k_alpha - sqrt(n), 0 ,1)
+cat("El valor de la potencia para el test normal es:", potencia_del_test_normal, "\n")
+
+
 # Luego pasamos a computar el test de signos
 # El test de signos va a tener una distribucion Bi(n,1/2) bajo H0, ya que si tita = 0, 
 # la distribucuion va a ser simetrica y centrada en 0, por lo que la probabilidad de ser mayor o menor que cero es la misma.
@@ -406,4 +413,3 @@ k <- calculo_cuantil_binomial(12,0.05)
 vector_resultado_bin <- ifelse(vector_Ys >= k, 1, 0) #IMPORTANTE EL IGUAL
 potencia_estimada_bin = (1/m) * sum(vector_resultado_bin)
 cat("La potencia estimada para el test de signo es:", potencia_estimada_bin)
-

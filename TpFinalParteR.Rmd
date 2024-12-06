@@ -51,7 +51,7 @@ Vemos que el metodo print tiene para despachar 266 clases distintas, pero esto t
 #metodos_de_density <- methods(class="density")
 cat('los métodos de density son: \n')
 methods(class = "density")
-cat('la cantidad de métodos sin contar print son: ', length(metodos_de_density)-1)
+cat('la cantidad de métodos sin contar print son: ', length(methods(class = "density"))-1)
 
 ```
 Vemos que en este caso tenemos 6 metodos que tiene la clase density.
@@ -209,7 +209,7 @@ mi.wilcox.test <- function(x, alternative, mu) {
   tobs <- estadistico(x)
   tMasObs <- (tobs/2) + n*(n+1)/4
   if (alternative == 'greater'){
-    p.value <- 1 - pTmas(tMasObs - 1, length(x)) 
+    p.value <- 1 - pTmas(tMasObs, length(x)) 
   } else if (alternative == 'two.sided'){
     p.value <- (1 - pTmas(abs(tobs)/2 + (n*(n+1)/4) - 1, length(x)))*2
   } else {
